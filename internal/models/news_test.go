@@ -20,7 +20,7 @@ func TestUser(t *testing.T) {
 
 func TestNewUser(t *testing.T) {
 	imageUrl := "foo-image-url"
-	channel := ChannelInfobae
+	channel := "foo-channel"
 	title := "foo-title"
 	url := "foo-url"
 	publishedAt := time.Now()
@@ -32,5 +32,4 @@ func TestNewUser(t *testing.T) {
 	assert.Equal(t, channel, news.Channel)
 	assert.Equal(t, url, news.Url)
 	assert.Equal(t, publishedAt, news.PublishedAt)
-
 }
