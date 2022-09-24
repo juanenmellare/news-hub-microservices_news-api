@@ -13,9 +13,14 @@ type NewsRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: user
-func (_m *NewsRepository) Create(user *models.News) {
-	_m.Called(user)
+// Create provides a mock function with given fields: news
+func (_m *NewsRepository) Create(news *models.News) {
+	_m.Called(news)
+}
+
+// CreateBulk provides a mock function with given fields: newsList
+func (_m *NewsRepository) CreateBulk(newsList []models.News) {
+	_m.Called(newsList)
 }
 
 type mockConstructorTestingTNewNewsRepository interface {

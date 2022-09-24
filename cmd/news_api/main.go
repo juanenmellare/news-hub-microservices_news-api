@@ -23,7 +23,9 @@ func main() {
 	relationalDatabase := databases.NewConnection(gorm.Open(postgres.Open(connectionString), &gorm.Config{}))
 	relationalDatabase.DoMigration()
 
-	domainLayersFactory := factories.NewControllersFactory(relationalDatabase)
+	domainLayersFactory := factories.NewLayersFactory(relationalDatabase, config)
+
+	factories.NewJobsFactory(domainLayersFactory).RunAll()
 
 	port := ":" + config.GetPort()
 	if err := api.NewRouter(domainLayersFactory).Run(port); err != nil {

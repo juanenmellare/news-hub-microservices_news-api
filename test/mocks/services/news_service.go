@@ -9,6 +9,11 @@ type NewsService struct {
 	mock.Mock
 }
 
+// FetchNews provides a mock function with given fields:
+func (_m *NewsService) FetchNews() {
+	_m.Called()
+}
+
 type mockConstructorTestingTNewNewsService interface {
 	mock.TestingT
 	Cleanup(func())

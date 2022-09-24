@@ -24,7 +24,7 @@ func HandlePanicRecoveryMiddleware(context *gin.Context, i interface{}) {
 	context.JSON(apiError.Code, apiError)
 }
 
-func NewRouter(controllers factories.ControllersFactory) *gin.Engine {
+func NewRouter(controllers factories.LayersFactory) *gin.Engine {
 	router := gin.Default()
 	router.Use(gin.CustomRecovery(HandlePanicRecoveryMiddleware))
 

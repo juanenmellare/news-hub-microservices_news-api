@@ -7,12 +7,12 @@ import (
 type NewsController interface {
 }
 
-type newsControllerImpl struct {
+type newsController struct {
 	NewsService services.NewsService
 }
 
 func NewNewsController(newsService services.NewsService) NewsController {
-	return &newsControllerImpl{
+	return &newsController{
 		newsService,
 	}
 }

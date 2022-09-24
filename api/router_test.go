@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httptest"
+	"news-hub-microservices_news-api/configs"
 	"news-hub-microservices_news-api/internal/errors"
 	"testing"
 
@@ -15,7 +16,7 @@ import (
 )
 
 func Test_New(t *testing.T) {
-	DomainLayersFactory := factories.NewControllersFactory(nil)
+	DomainLayersFactory := factories.NewLayersFactory(nil, configs.NewConfig())
 	engine := NewRouter(DomainLayersFactory)
 	s := httptest.NewServer(engine)
 
