@@ -13,14 +13,41 @@ type NewsRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: news
-func (_m *NewsRepository) Create(news *models.News) {
-	_m.Called(news)
-}
-
 // CreateBulk provides a mock function with given fields: newsList
 func (_m *NewsRepository) CreateBulk(newsList []models.News) {
 	_m.Called(newsList)
+}
+
+// GetTotal provides a mock function with given fields:
+func (_m *NewsRepository) GetTotal() *int64 {
+	ret := _m.Called()
+
+	var r0 *int64
+	if rf, ok := ret.Get(0).(func() *int64); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*int64)
+		}
+	}
+
+	return r0
+}
+
+// List provides a mock function with given fields: offset, limit
+func (_m *NewsRepository) List(offset int, limit int) *[]models.News {
+	ret := _m.Called(offset, limit)
+
+	var r0 *[]models.News
+	if rf, ok := ret.Get(0).(func(int, int) *[]models.News); ok {
+		r0 = rf(offset, limit)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]models.News)
+		}
+	}
+
+	return r0
 }
 
 type mockConstructorTestingTNewNewsRepository interface {

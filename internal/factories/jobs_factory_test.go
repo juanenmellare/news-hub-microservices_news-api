@@ -11,14 +11,14 @@ import (
 
 func TestNewJobsFactory(t *testing.T) {
 	newsServiceMock := mocks2.NewsService{}
-	newsServiceMock.On("FetchNews").Return(nil)
+	newsServiceMock.On("Fetch").Return(nil)
 
 	layersFactoryMock := &mocks.LayersFactory{}
 	layersFactoryMock.On("GetNewsService").Return(&newsServiceMock)
 
 	jobsFactory := NewJobsFactory(layersFactoryMock)
 
-	fetchNewsCronJobExpected := jobs.NewCronJob("FetchNews", "*/30 * * * *", layersFactoryMock.GetNewsService().FetchNews)
+	fetchNewsCronJobExpected := jobs.NewCronJob("Fetch", "*/30 * * * *", layersFactoryMock.GetNewsService().Fetch)
 
 	assert.Equal(t, jobsFactory.fetchNewsCronJob.GetName(), fetchNewsCronJobExpected.GetName())
 	assert.Equal(t, jobsFactory.fetchNewsCronJob.GetCron(), fetchNewsCronJobExpected.GetCron())
@@ -33,7 +33,7 @@ func Test_jobsFactory_RunAll(t *testing.T) {
 	}()
 
 	newsServiceMock := mocks2.NewsService{}
-	newsServiceMock.On("FetchNews").Return(nil)
+	newsServiceMock.On("Fetch").Return(nil)
 
 	layersFactoryMock := &mocks.LayersFactory{}
 	layersFactoryMock.On("GetNewsService").Return(&newsServiceMock)

@@ -30,14 +30,10 @@ func NewRouter(controllers factories.LayersFactory) *gin.Engine {
 
 	router.GET("/ping", controllers.GetHealthChecksController().Ping)
 
-	/*
-		newsController := controllers.GetNewsController()
-		v1 := router.Group("/v1")
-		{
-			v1.GET("/", newsController.Get)
-			v1.POST("/", newsController.Create)
-			v1.POST("/login", newsController.Authenticate)
-		}
-	*/
+	newsController := controllers.GetNewsController()
+	v1 := router.Group("/v1")
+	{
+		v1.GET("/", newsController.List)
+	}
 	return router
 }

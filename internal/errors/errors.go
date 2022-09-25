@@ -46,6 +46,14 @@ func NewRequestFieldsShouldNotBeEmptyError(fields []string) *ApiError {
 	return NewBadRequestApiError(fmt.Sprintf("the %s '%s' should not be empty", grammaticalNumber, fieldString))
 }
 
+func NewIntQueryParamError(param string) *ApiError {
+	return NewBadRequestApiError(fmt.Sprintf("the param '%s' should be an int value", param))
+}
+
+func NewOutOfRangeIntParamError(param string, minValue, maxValue int) *ApiError {
+	return NewBadRequestApiError(fmt.Sprintf("the param '%s' should be between %d and %d", param, minValue, maxValue))
+}
+
 type ErrorWithMessage interface {
 	GetMessage() string
 }
