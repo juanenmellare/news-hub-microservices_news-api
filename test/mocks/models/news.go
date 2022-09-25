@@ -14,7 +14,7 @@ func (u NewsBuilder) Build() models.News {
 	return u.user
 }
 
-func NewUserBuilder() *NewsBuilder {
+func NewNewsBuilder() *NewsBuilder {
 	uuidMock, _ := uuid.NewV4()
 
 	return &NewsBuilder{

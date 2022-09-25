@@ -3,26 +3,37 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"news-hub-microservices_news-api/internal/errors"
+	"strconv"
 )
 
-func validateStringField(fieldName string, field *string, notValidFields *[]string) {
-	if field == nil || *field == "" {
-		*notValidFields = append(*notValidFields, fieldName)
+func queryParamToInt(context *gin.Context, param, defaultValue string) int {
+	value := context.DefaultQuery(param, defaultValue)
+	intValue, err := strconv.Atoi(value)
+	if err != nil {
+		panic(errors.NewIntQueryParamError(param))
 	}
-}
-
-func validateNotValidFieldsSlice(notValidFields []string) {
-	if len(notValidFields) > 0 {
-		panic(errors.NewRequestFieldsShouldNotBeEmptyError(notValidFields))
-	}
-}
-
-func marshallRequestBody(context *gin.Context, i interface{}) {
-	if err := context.BindJSON(&i); err != nil {
-		panic(errors.NewBadRequestApiError(err.Error()))
-	}
+	return intValue
 }
 
 type Request interface {
 	MarshallAndValidate(context *gin.Context)
+}
+
+type ListRequest struct {
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+}
+
+func (r *ListRequest) MarshallAndValidate(context *gin.Context) {
+	offset := queryParamToInt(context, "offset", "0")
+	limit := queryParamToInt(context, "limit", "25")
+
+	minLimit := 1
+	maxLimit := 100
+	if limit < minLimit || limit > maxLimit {
+		panic(errors.NewOutOfRangeIntParamError("limit", minLimit, maxLimit))
+	}
+
+	r.Limit = limit
+	r.Offset = offset
 }

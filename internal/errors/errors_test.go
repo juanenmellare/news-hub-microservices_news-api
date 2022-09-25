@@ -2,6 +2,7 @@ package errors
 
 import (
 	"errors"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
@@ -74,6 +75,28 @@ func Test_NewRequestFieldsShouldNotBeEmptyError_multiFields(t *testing.T) {
 	assert.Equal(t, "Bad Request", apiError.Status)
 	assert.Equal(t, http.StatusBadRequest, apiError.Code)
 	assert.Equal(t, "the fields 'foo, foo2' should not be empty", apiError.Message)
+}
+
+func Test_NewIntQueryParamError(t *testing.T) {
+	param := "foo"
+
+	apiError := NewIntQueryParamError(param)
+
+	assert.Equal(t, "Bad Request", apiError.Status)
+	assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	assert.Equal(t, fmt.Sprintf("the param '%s' should be an int value", param), apiError.Message)
+}
+
+func Test_NewOutOfRangeIntParamError(t *testing.T) {
+	param := "foo"
+	minValue := 1
+	maxValue := 100
+
+	apiError := NewOutOfRangeIntParamError(param, minValue, maxValue)
+
+	assert.Equal(t, "Bad Request", apiError.Status)
+	assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	assert.Equal(t, fmt.Sprintf("the param '%s' should be between %d and %d", param, minValue, maxValue), apiError.Message)
 }
 
 func TestNewAlreadyExistModelError(t *testing.T) {

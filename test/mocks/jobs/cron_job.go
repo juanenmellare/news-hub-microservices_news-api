@@ -9,6 +9,34 @@ type CronJob struct {
 	mock.Mock
 }
 
+// GetCron provides a mock function with given fields:
+func (_m *CronJob) GetCron() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
+// GetName provides a mock function with given fields:
+func (_m *CronJob) GetName() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // Run provides a mock function with given fields:
 func (_m *CronJob) Run() {
 	_m.Called()

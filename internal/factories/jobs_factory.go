@@ -15,7 +15,7 @@ type jobsFactory struct {
 
 func NewJobsFactory(layersFactory LayersFactory) *jobsFactory {
 	return &jobsFactory{
-		fetchNewsCronJob: jobs.NewCronJob("FetchNews", "*/30 * * * *", layersFactory.GetNewsService().FetchNews),
+		fetchNewsCronJob: jobs.NewCronJob("Fetch", "*/30 * * * *", layersFactory.GetNewsService().Fetch),
 	}
 }
 

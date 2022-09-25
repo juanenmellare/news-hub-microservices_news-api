@@ -5,7 +5,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"news-hub-microservices_news-api/internal/clients"
+	"news-hub-microservices_news-api/internal/models"
 	mocksClients "news-hub-microservices_news-api/test/mocks/clients"
+	mocksModels "news-hub-microservices_news-api/test/mocks/models"
 	mocksRepositories "news-hub-microservices_news-api/test/mocks/repositories"
 	"testing"
 	"time"
@@ -27,7 +29,7 @@ func Test_NewNewsService(t *testing.T) {
 	assert.Implements(t, (*NewsService)(nil), NewNewsService(&newsRepository, &newsProxyApiNews))
 }
 
-func Test_newsService_FetchNews(t *testing.T) {
+func Test_newsService_Fetch(t *testing.T) {
 	assertShouldNotPanic(t)
 
 	newsRepository := &mocksRepositories.NewsRepository{}
@@ -46,10 +48,10 @@ func Test_newsService_FetchNews(t *testing.T) {
 
 	newsService := NewNewsService(newsRepository, newsProxyApiClient)
 
-	newsService.FetchNews()
+	newsService.Fetch()
 }
 
-func Test_newsService_FetchNews_panic_GetChannelLatestNews_recover(t *testing.T) {
+func Test_newsService_Fetch_panic_GetChannelLatestNews_recover(t *testing.T) {
 	assertShouldNotPanic(t)
 
 	newsRepository := &mocksRepositories.NewsRepository{}
@@ -61,5 +63,31 @@ func Test_newsService_FetchNews_panic_GetChannelLatestNews_recover(t *testing.T)
 
 	newsService := NewNewsService(newsRepository, newsProxyApiClient)
 
-	newsService.FetchNews()
+	newsService.Fetch()
+}
+
+func Test_newsService_List(t *testing.T) {
+	offset := 0
+	limit := 25
+	newsMock := mocksModels.NewNewsBuilder().Build()
+	newsListExpected := &[]models.News{newsMock}
+	newsRepository := &mocksRepositories.NewsRepository{}
+	newsRepository.On("List", offset, limit).Return(newsListExpected)
+
+	newsService := NewNewsService(newsRepository, nil)
+	newsList := newsService.List(offset, limit)
+
+	assert.Equal(t, newsListExpected, newsList)
+}
+
+func Test_newsService_Count(t *testing.T) {
+	totalExpected := int64(10)
+
+	newsRepository := &mocksRepositories.NewsRepository{}
+	newsRepository.On("GetTotal").Return(&totalExpected)
+
+	newsService := NewNewsService(newsRepository, nil)
+	total := newsService.GetTotal()
+
+	assert.Equal(t, &totalExpected, total)
 }

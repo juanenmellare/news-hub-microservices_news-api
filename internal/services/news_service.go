@@ -9,7 +9,9 @@ import (
 )
 
 type NewsService interface {
-	FetchNews()
+	Fetch()
+	List(offset, limit int) *[]models.News
+	GetTotal() *int64
 }
 
 type newsService struct {
@@ -35,13 +37,13 @@ func (n newsService) getNewsFromChannel(channel string) []models.News {
 }
 
 func (n newsService) queueNewsFromChannel(channel string, queue chan []models.News) {
-	defer utils.RecoverGoRoutineWithHandler("FetchNews.queueNewsFromChannel", func() {
+	defer utils.RecoverGoRoutineWithHandler("Fetch.queueNewsFromChannel", func() {
 		queue <- make([]models.News, 0)
 	})
 	queue <- n.getNewsFromChannel(channel)
 }
 
-func (n newsService) FetchNews() {
+func (n newsService) Fetch() {
 	getChannelsNamesResponse := n.newsProxyClient.GetChannelsNames()
 	channels := getChannelsNamesResponse.Channels
 	channelsLen := len(channels)
@@ -54,7 +56,7 @@ func (n newsService) FetchNews() {
 		go n.queueNewsFromChannel(channel, queue)
 	}
 	go func() {
-		defer utils.RecoverGoRoutine("FetchNews.appendNewList")
+		defer utils.RecoverGoRoutine("Fetch.appendNewList")
 		for newsListToAppend := range queue {
 			newsList = append(newsList, newsListToAppend...)
 			wg.Done()
@@ -65,6 +67,14 @@ func (n newsService) FetchNews() {
 	if len(newsList) > 0 {
 		n.newsRepository.CreateBulk(newsList)
 	}
+}
+
+func (n newsService) List(offset, limit int) *[]models.News {
+	return n.newsRepository.List(offset, limit)
+}
+
+func (n newsService) GetTotal() *int64 {
+	return n.newsRepository.GetTotal()
 }
 
 func NewNewsService(newsRepository repositories.NewsRepository, newsProxyClient clients.NewsProxyApiClient) NewsService {
