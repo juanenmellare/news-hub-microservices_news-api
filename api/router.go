@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"news-hub-microservices_news-api/configs"
 	"news-hub-microservices_news-api/internal/errors"
 	"news-hub-microservices_news-api/internal/factories"
 )
@@ -24,7 +26,15 @@ func HandlePanicRecoveryMiddleware(context *gin.Context, i interface{}) {
 	context.JSON(apiError.Code, apiError)
 }
 
-func NewRouter(controllers factories.LayersFactory) *gin.Engine {
+func BasicAuthenticationMiddleware(c *gin.Context, candidateUsername, candidatePassword string) {
+	username, password, hasAuth := c.Request.BasicAuth()
+	if !hasAuth || username != candidateUsername || password != candidatePassword {
+		c.JSON(http.StatusUnauthorized, errors.NewUnauthorizedApiError("invalid credentials"))
+		c.Abort()
+	}
+}
+
+func NewRouter(controllers factories.LayersFactory, config configs.Config) *gin.Engine {
 	router := gin.Default()
 	router.Use(gin.CustomRecovery(HandlePanicRecoveryMiddleware))
 
@@ -32,8 +42,11 @@ func NewRouter(controllers factories.LayersFactory) *gin.Engine {
 
 	newsController := controllers.GetNewsController()
 	v1 := router.Group("/v1")
+	v1.Use(func(c *gin.Context) {
+		BasicAuthenticationMiddleware(c, config.GetBasicAuthUsername(), config.GetBasicAuthPassword())
+	})
 	{
-		v1.GET("/", newsController.List)
+		v1.GET("", newsController.List)
 	}
 	return router
 }

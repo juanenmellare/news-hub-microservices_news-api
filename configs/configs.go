@@ -14,6 +14,8 @@ type Config interface {
 	GetNewProxyApiBaseUrl() string
 	GetNewProxyApiUsername() string
 	GetNewProxyApiPassword() string
+	GetBasicAuthUsername() string
+	GetBasicAuthPassword() string
 }
 
 type config struct {
@@ -26,6 +28,8 @@ type config struct {
 	newsProxyApiBaseUrl  string
 	newsProxyApiUsername string
 	newsProxyApiPassword string
+	basicAuthUsername    string
+	basicAuthPassword    string
 }
 
 func NewConfig() Config {
@@ -39,6 +43,8 @@ func NewConfig() Config {
 		newsProxyApiBaseUrl:  getStringValueOrDefault("NEWS_PROXY_API_BASE_URL", "https://news-hub-microservices-np-api.herokuapp.com"),
 		newsProxyApiUsername: getStringValueOrDefault("NEWS_PROXY_API_USERNAME", "admin"),
 		newsProxyApiPassword: getStringValueOrDefault("NEWS_PROXY_API_PASSWORD", "password"),
+		basicAuthUsername:    getStringValueOrDefault("BASIC_AUTH_USERNAME", "admin"),
+		basicAuthPassword:    getStringValueOrDefault("BASIC_AUTH_PASSWORD", "password"),
 	}
 }
 
@@ -85,4 +91,12 @@ func (c config) GetNewProxyApiUsername() string {
 
 func (c config) GetNewProxyApiPassword() string {
 	return c.newsProxyApiPassword
+}
+
+func (c config) GetBasicAuthUsername() string {
+	return c.basicAuthUsername
+}
+
+func (c config) GetBasicAuthPassword() string {
+	return c.basicAuthPassword
 }
