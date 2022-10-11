@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	clients "news-hub-microservices_news-api/internal/clients"
 	controllers "news-hub-microservices_news-api/internal/controllers"
 
 	mock "github.com/stretchr/testify/mock"
@@ -57,6 +58,22 @@ func (_m *LayersFactory) GetNewsService() services.NewsService {
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(services.NewsService)
+		}
+	}
+
+	return r0
+}
+
+// GetUsersApiClient provides a mock function with given fields:
+func (_m *LayersFactory) GetUsersApiClient() clients.UsersApiClient {
+	ret := _m.Called()
+
+	var r0 clients.UsersApiClient
+	if rf, ok := ret.Get(0).(func() clients.UsersApiClient); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(clients.UsersApiClient)
 		}
 	}
 

@@ -11,9 +11,14 @@ type Config interface {
 	GetDatabasePort() string
 	GetDatabaseUser() string
 	GetDatabasePass() string
-	GetNewProxyApiBaseUrl() string
-	GetNewProxyApiUsername() string
-	GetNewProxyApiPassword() string
+	GetNewsProxyApiBaseUrl() string
+	GetNewsProxyApiUsername() string
+	GetNewsProxyApiPassword() string
+	GetUsersApiBaseUrl() string
+	GetUsersApiUsername() string
+	GetUsersApiPassword() string
+	GetBasicAuthUsername() string
+	GetBasicAuthPassword() string
 }
 
 type config struct {
@@ -26,6 +31,11 @@ type config struct {
 	newsProxyApiBaseUrl  string
 	newsProxyApiUsername string
 	newsProxyApiPassword string
+	usersApiBaseUrl      string
+	usersApiUsername     string
+	usersApiPassword     string
+	basicAuthUsername    string
+	basicAuthPassword    string
 }
 
 func NewConfig() Config {
@@ -39,6 +49,11 @@ func NewConfig() Config {
 		newsProxyApiBaseUrl:  getStringValueOrDefault("NEWS_PROXY_API_BASE_URL", "https://news-hub-microservices-np-api.herokuapp.com"),
 		newsProxyApiUsername: getStringValueOrDefault("NEWS_PROXY_API_USERNAME", "admin"),
 		newsProxyApiPassword: getStringValueOrDefault("NEWS_PROXY_API_PASSWORD", "password"),
+		usersApiBaseUrl:      getStringValueOrDefault("USERS_API_BASE_URL", "https://news-hub-microservices-u-api.herokuapp.com"),
+		usersApiUsername:     getStringValueOrDefault("USERS_API_USERNAME", "admin"),
+		usersApiPassword:     getStringValueOrDefault("USERS_API_PASSWORD", "password"),
+		basicAuthUsername:    getStringValueOrDefault("BASIC_AUTH_USERNAME", "admin"),
+		basicAuthPassword:    getStringValueOrDefault("BASIC_AUTH_PASSWORD", "password"),
 	}
 }
 
@@ -75,14 +90,34 @@ func (c config) GetDatabasePass() string {
 	return c.databasePass
 }
 
-func (c config) GetNewProxyApiBaseUrl() string {
+func (c config) GetNewsProxyApiBaseUrl() string {
 	return c.newsProxyApiBaseUrl
 }
 
-func (c config) GetNewProxyApiUsername() string {
+func (c config) GetNewsProxyApiUsername() string {
 	return c.newsProxyApiUsername
 }
 
-func (c config) GetNewProxyApiPassword() string {
+func (c config) GetNewsProxyApiPassword() string {
 	return c.newsProxyApiPassword
+}
+
+func (c config) GetUsersApiBaseUrl() string {
+	return c.usersApiBaseUrl
+}
+
+func (c config) GetUsersApiUsername() string {
+	return c.usersApiUsername
+}
+
+func (c config) GetUsersApiPassword() string {
+	return c.usersApiPassword
+}
+
+func (c config) GetBasicAuthUsername() string {
+	return c.basicAuthUsername
+}
+
+func (c config) GetBasicAuthPassword() string {
+	return c.basicAuthPassword
 }

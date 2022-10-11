@@ -39,6 +39,16 @@ func Test_NewBadRequestApiError(t *testing.T) {
 	assert.Equal(t, err.Error(), apiError.Message)
 }
 
+func Test_NewUnauthorizedApiError(t *testing.T) {
+	err := errors.New("panic")
+
+	apiError := NewUnauthorizedApiError(err.Error())
+
+	assert.Equal(t, "Unauthorized", apiError.Status)
+	assert.Equal(t, http.StatusUnauthorized, apiError.Code)
+	assert.Equal(t, err.Error(), apiError.Message)
+}
+
 func Test_NewError(t *testing.T) {
 	message := "panic"
 	err := NewError(message)

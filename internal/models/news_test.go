@@ -33,3 +33,13 @@ func TestNewUser(t *testing.T) {
 	assert.Equal(t, url, news.Url)
 	assert.Equal(t, publishedAt, news.PublishedAt)
 }
+
+func TestNewNewsReader(t *testing.T) {
+	newId, _ := uuid.NewV4()
+	userId, _ := uuid.NewV4()
+
+	newsReader := NewNewsReader(newId, userId)
+
+	assert.Equal(t, newId, newsReader.NewsId)
+	assert.Equal(t, userId, newsReader.UserId)
+}
