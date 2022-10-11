@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/gofrs/uuid"
 	"gorm.io/gorm/clause"
 	"news-hub-microservices_news-api/internal/databases"
 	"news-hub-microservices_news-api/internal/models"
@@ -8,8 +9,10 @@ import (
 
 type NewsRepository interface {
 	CreateBulk(newsList []models.News)
-	List(offset, limit int) *[]models.News
+	FindAll(offset, limit int, userId *uuid.UUID) *[]models.News
 	GetTotal() *int64
+	FindById(id string) *models.News
+	AddNewsReader(reader *models.NewsReader)
 }
 
 type newsRepository struct {
@@ -23,9 +26,18 @@ func (u newsRepository) CreateBulk(users []models.News) {
 	}
 }
 
-func (u newsRepository) List(offset, limit int) *[]models.News {
+func (u newsRepository) FindAll(offset, limit int, userId *uuid.UUID) *[]models.News {
 	var newsList []models.News
-	tx := u.relationalDatabase.Get().Offset(offset).Limit(limit).Find(&newsList)
+	var userIdValue string
+	if userId != nil {
+		userIdValue = userId.String()
+	}
+	tx := u.relationalDatabase.Get().
+		Order("published_at DESC").
+		Offset(offset).
+		Limit(limit).
+		Preload("NewsReaders", "\"news_readers\".\"user_id\" = ?", userIdValue).
+		Find(&newsList)
 	if err := tx.Error; err != nil {
 		panic(err)
 	}
@@ -41,6 +53,22 @@ func (u newsRepository) GetTotal() *int64 {
 	}
 
 	return &count
+}
+
+func (u newsRepository) FindById(id string) *models.News {
+	var news models.News
+	result := u.relationalDatabase.Get().First(&news, "id = ?", id)
+	if result.Error != nil {
+		return nil
+	}
+	return &news
+}
+
+func (u newsRepository) AddNewsReader(reader *models.NewsReader) {
+	result := u.relationalDatabase.Get().Clauses(clause.OnConflict{DoNothing: true}).Create(reader)
+	if result.Error != nil {
+		panic(result.Error)
+	}
 }
 
 func NewNewsRepository(relationalDatabase databases.RelationalDatabase) NewsRepository {

@@ -3,6 +3,7 @@ package factories
 import (
 	"github.com/stretchr/testify/assert"
 	"news-hub-microservices_news-api/configs"
+	"news-hub-microservices_news-api/internal/clients"
 	"news-hub-microservices_news-api/internal/controllers"
 	"news-hub-microservices_news-api/internal/services"
 	"testing"
@@ -34,4 +35,10 @@ func Test_domainLayersFactory_GetNewsController(t *testing.T) {
 	domainLayersFactory := buildDomainLayersFactory()
 
 	assert.Implements(t, (*controllers.NewsController)(nil), domainLayersFactory.GetNewsController())
+}
+
+func Test_domainLayersFactory_GetUsersApiClient(t *testing.T) {
+	domainLayersFactory := buildDomainLayersFactory()
+
+	assert.Implements(t, (*clients.UsersApiClient)(nil), domainLayersFactory.GetUsersApiClient())
 }

@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"news-hub-microservices_news-api/internal/clients"
@@ -69,13 +70,15 @@ func Test_newsService_Fetch_panic_GetChannelLatestNews_recover(t *testing.T) {
 func Test_newsService_List(t *testing.T) {
 	offset := 0
 	limit := 25
+	var userId *uuid.UUID
+
 	newsMock := mocksModels.NewNewsBuilder().Build()
 	newsListExpected := &[]models.News{newsMock}
 	newsRepository := &mocksRepositories.NewsRepository{}
-	newsRepository.On("List", offset, limit).Return(newsListExpected)
+	newsRepository.On("FindAll", offset, limit, userId).Return(newsListExpected)
 
 	newsService := NewNewsService(newsRepository, nil)
-	newsList := newsService.List(offset, limit)
+	newsList := newsService.List(offset, limit, userId)
 
 	assert.Equal(t, newsListExpected, newsList)
 }
@@ -90,4 +93,17 @@ func Test_newsService_Count(t *testing.T) {
 	total := newsService.GetTotal()
 
 	assert.Equal(t, &totalExpected, total)
+}
+
+func Test_newsService_AddReader(t *testing.T) {
+	newsId, _ := uuid.NewV4()
+	userId, _ := uuid.NewV4()
+
+	newsReader := models.NewsReader{NewsId: newsId, UserId: userId}
+
+	newsRepository := &mocksRepositories.NewsRepository{}
+	newsRepository.On("AddNewsReader", &newsReader).Return()
+
+	newsService := NewNewsService(newsRepository, nil)
+	newsService.AddReader(newsId, userId)
 }

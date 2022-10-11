@@ -14,11 +14,17 @@ func buildHealthChecksController() controllers.HealthChecksController {
 	return controllers.NewHealthChecksController()
 }
 
+func buildUserApiClient(config configs.Config) clients.UsersApiClient {
+	restClient := clients.NewRestClient(config.GetUsersApiBaseUrl(), &http.Client{})
+	userApiClient := clients.NewUsersApiClient(restClient, config.GetUsersApiUsername(), config.GetUsersApiPassword())
+	return userApiClient
+}
+
 func buildNewsService(relationalDatabase databases.RelationalDatabase, config configs.Config) services.NewsService {
 	newsRepository := repositories.NewNewsRepository(relationalDatabase)
 
-	restClient := clients.NewRestClient(config.GetNewProxyApiBaseUrl(), &http.Client{})
-	newsProxyApiClient := clients.NewNewsProxyApiClient(restClient, config.GetNewProxyApiUsername(), config.GetNewProxyApiPassword())
+	restClient := clients.NewRestClient(config.GetNewsProxyApiBaseUrl(), &http.Client{})
+	newsProxyApiClient := clients.NewNewsProxyApiClient(restClient, config.GetNewsProxyApiUsername(), config.GetNewsProxyApiPassword())
 
 	newsService := services.NewNewsService(newsRepository, newsProxyApiClient)
 
@@ -35,12 +41,14 @@ type LayersFactory interface {
 	GetHealthChecksController() controllers.HealthChecksController
 	GetNewsService() services.NewsService
 	GetNewsController() controllers.NewsController
+	GetUsersApiClient() clients.UsersApiClient
 }
 
 type layersFactory struct {
 	healthChecksController controllers.HealthChecksController
 	newsController         controllers.NewsController
 	newsService            services.NewsService
+	userApiClient          clients.UsersApiClient
 }
 
 func NewLayersFactory(relationalDatabase databases.RelationalDatabase, config configs.Config) LayersFactory {
@@ -49,6 +57,7 @@ func NewLayersFactory(relationalDatabase databases.RelationalDatabase, config co
 		healthChecksController: buildHealthChecksController(),
 		newsService:            newsService,
 		newsController:         buildNewsController(newsService),
+		userApiClient:          buildUserApiClient(config),
 	}
 }
 
@@ -62,4 +71,8 @@ func (c layersFactory) GetNewsService() services.NewsService {
 
 func (c layersFactory) GetNewsController() controllers.NewsController {
 	return c.newsController
+}
+
+func (c layersFactory) GetUsersApiClient() clients.UsersApiClient {
+	return c.userApiClient
 }
