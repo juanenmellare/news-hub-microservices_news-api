@@ -17,6 +17,11 @@ func (_m *NewsController) List(context *gin.Context) {
 	_m.Called(context)
 }
 
+// Read provides a mock function with given fields: context
+func (_m *NewsController) Read(context *gin.Context) {
+	_m.Called(context)
+}
+
 type mockConstructorTestingTNewNewsController interface {
 	mock.TestingT
 	Cleanup(func())

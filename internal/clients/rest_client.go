@@ -4,11 +4,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	restUtils "github.com/juanenmellare/gorequestbuilder"
 	"io"
 	"io/ioutil"
 	"net/http"
 )
-import restUtils "github.com/juanenmellare/gorequestbuilder"
+
+type mockRestClient struct{}
+
+func (r mockRestClient) Call(_ restUtils.RequestBuilder, _ interface{}) (*http.Response, error) {
+	return &http.Response{}, nil
+}
+
+type mockRestClientError struct{}
+
+func (r mockRestClientError) Call(_ restUtils.RequestBuilder, _ interface{}) (*http.Response, error) {
+	return &http.Response{}, errors.New("foo-error")
+}
 
 type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)

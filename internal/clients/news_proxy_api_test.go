@@ -2,23 +2,9 @@ package clients
 
 import (
 	"errors"
-	"github.com/juanenmellare/gorequestbuilder"
 	"github.com/stretchr/testify/assert"
-	"net/http"
 	"testing"
 )
-
-type mockRestClient struct{}
-
-func (r mockRestClient) Call(_ gorequestbuilder.RequestBuilder, _ interface{}) (*http.Response, error) {
-	return &http.Response{}, nil
-}
-
-type mockRestClientError struct{}
-
-func (r mockRestClientError) Call(_ gorequestbuilder.RequestBuilder, _ interface{}) (*http.Response, error) {
-	return &http.Response{}, errors.New("foo-error")
-}
 
 func TestNewNewsProxyApiClient(t *testing.T) {
 	newsProxyApiClient := NewNewsProxyApiClient(&mockRestClient{}, "", "")

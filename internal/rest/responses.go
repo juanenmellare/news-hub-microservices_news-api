@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/gofrs/uuid"
 	"math"
 	"news-hub-microservices_news-api/internal/models"
 	"time"
@@ -13,6 +14,7 @@ type newsResponse struct {
 	Channel     string    `json:"channel" `
 	Url         string    `json:"url"`
 	PublishedAt time.Time `json:"publishedAt"`
+	HasBeenRead *bool     `json:"hasBeenRead,omitempty"`
 }
 
 type ListResponse struct {
@@ -23,13 +25,20 @@ type ListResponse struct {
 	Total    int64          `json:"total"`
 }
 
-func parseNewList(newsList *[]models.News) []newsResponse {
+func parseNewList(newsList *[]models.News, userId *uuid.UUID) []newsResponse {
 	var newsListValue []models.News
 	if newsList != nil {
 		newsListValue = *newsList
 	}
+	hasUserId := userId != nil
 	newsListResponse := make([]newsResponse, len(newsListValue))
 	for index, news := range newsListValue {
+		var hasBeenRead *bool
+		if hasUserId {
+			hasNewsBeenRead := len(news.NewsReaders) == 1 && news.NewsReaders[0].UserId.String() == userId.String()
+			hasBeenRead = &hasNewsBeenRead
+		}
+
 		newsListResponse[index] = newsResponse{
 			ID:          news.ID.String(),
 			Title:       news.Title,
@@ -37,6 +46,7 @@ func parseNewList(newsList *[]models.News) []newsResponse {
 			Channel:     news.Channel,
 			Url:         news.Url,
 			PublishedAt: news.PublishedAt,
+			HasBeenRead: hasBeenRead,
 		}
 	}
 
@@ -51,8 +61,8 @@ func parseTotal(total *int64) int64 {
 	return totalValue
 }
 
-func NewListResponse(newsList *[]models.News, offset, limit int, total *int64) *ListResponse {
-	newsListResponse := parseNewList(newsList)
+func NewListResponse(newsList *[]models.News, offset, limit int, total *int64, userId *uuid.UUID) *ListResponse {
+	newsListResponse := parseNewList(newsList, userId)
 	totalValue := parseTotal(total)
 	pages := int64(math.Ceil(float64(*total) / float64(limit)))
 

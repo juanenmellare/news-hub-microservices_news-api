@@ -34,6 +34,7 @@ func (r relationDatabase) DoMigration() {
 
 	modelsToAutoMigrate := []interface{}{
 		&models.News{},
+		&models.NewsReader{},
 	}
 
 	for _, model := range modelsToAutoMigrate {

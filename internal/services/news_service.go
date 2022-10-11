@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/gofrs/uuid"
 	"news-hub-microservices_news-api/internal/clients"
 	"news-hub-microservices_news-api/internal/models"
 	"news-hub-microservices_news-api/internal/repositories"
@@ -10,8 +11,9 @@ import (
 
 type NewsService interface {
 	Fetch()
-	List(offset, limit int) *[]models.News
+	List(offset, limit int, userId *uuid.UUID) *[]models.News
 	GetTotal() *int64
+	AddReader(newsId, userId uuid.UUID)
 }
 
 type newsService struct {
@@ -69,12 +71,17 @@ func (n newsService) Fetch() {
 	}
 }
 
-func (n newsService) List(offset, limit int) *[]models.News {
-	return n.newsRepository.List(offset, limit)
+func (n newsService) List(offset, limit int, userId *uuid.UUID) *[]models.News {
+	return n.newsRepository.FindAll(offset, limit, userId)
 }
 
 func (n newsService) GetTotal() *int64 {
 	return n.newsRepository.GetTotal()
+}
+
+func (n newsService) AddReader(newsId, userId uuid.UUID) {
+	newsReader := models.NewNewsReader(newsId, userId)
+	n.newsRepository.AddNewsReader(newsReader)
 }
 
 func NewNewsService(newsRepository repositories.NewsRepository, newsProxyClient clients.NewsProxyApiClient) NewsService {

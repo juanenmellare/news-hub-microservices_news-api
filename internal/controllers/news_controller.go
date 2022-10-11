@@ -9,6 +9,7 @@ import (
 
 type NewsController interface {
 	List(context *gin.Context)
+	Read(context *gin.Context)
 }
 
 type newsController struct {
@@ -19,12 +20,21 @@ func (n newsController) List(context *gin.Context) {
 	var request rest.ListRequest
 	request.MarshallAndValidate(context)
 
-	newsList := n.NewsService.List(request.Offset, request.Limit)
+	newsList := n.NewsService.List(request.Offset, request.Limit, request.UserId)
 	total := n.NewsService.GetTotal()
 
-	response := rest.NewListResponse(newsList, request.Offset, request.Limit, total)
+	response := rest.NewListResponse(newsList, request.Offset, request.Limit, total, request.UserId)
 
 	context.JSON(http.StatusOK, &response)
+}
+
+func (n newsController) Read(context *gin.Context) {
+	var request rest.ReadRequest
+	request.MarshallAndValidate(context)
+
+	n.NewsService.AddReader(request.NewId, request.UserId)
+
+	context.Done()
 }
 
 func NewNewsController(newsService services.NewsService) NewsController {
