@@ -69,7 +69,7 @@ func Test_newsService_Fetch_panic_GetChannelLatestNews_recover(t *testing.T) {
 
 func Test_newsService_List(t *testing.T) {
 	offset := 0
-	limit := 25
+	limit := 20
 	var userId *uuid.UUID
 
 	newsMock := mocksModels.NewNewsBuilder().Build()
