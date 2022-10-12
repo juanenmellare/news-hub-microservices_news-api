@@ -21,7 +21,7 @@ func TestListRequest_MarshallAndValidate_default_param_values(t *testing.T) {
 	request.MarshallAndValidate(context)
 
 	assert.Equal(t, 0, request.Offset)
-	assert.Equal(t, 25, request.Limit)
+	assert.Equal(t, 20, request.Limit)
 	assert.Nil(t, request.UserId)
 }
 
