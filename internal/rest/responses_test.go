@@ -18,7 +18,7 @@ func TestNewListResponse(t *testing.T) {
 
 	newsList := []models.News{news, news2}
 	offsetExpected := 0
-	limitExpected := 25
+	limitExpected := 20
 	totalExpected := int64(85)
 	pagesExpected := int64(math.Ceil(float64(totalExpected) / float64(limitExpected)))
 

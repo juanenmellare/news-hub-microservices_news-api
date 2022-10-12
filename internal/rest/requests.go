@@ -27,7 +27,7 @@ type ListRequest struct {
 }
 
 func (r *ListRequest) MarshallAndValidate(context *gin.Context) {
-	limit := queryParamToInt(context, "limit", "25")
+	limit := queryParamToInt(context, "limit", "20")
 	minLimit := 1
 	maxLimit := 100
 	if limit < minLimit || limit > maxLimit {

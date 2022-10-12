@@ -35,7 +35,7 @@ func Test_newsController_List(t *testing.T) {
 	var id *uuid.UUID
 
 	var newsServices servicesMocks.NewsService
-	newsServices.On("List", 0, 25, id).Return(&newsList)
+	newsServices.On("List", 0, 20, id).Return(&newsList)
 	newsServices.On("GetTotal").Return(&total)
 
 	controller := NewNewsController(&newsServices)
@@ -48,7 +48,7 @@ func Test_newsController_List(t *testing.T) {
 	controller.List(context)
 
 	assert.Equal(t, http.StatusOK, writer.Code)
-	assert.Equal(t, "{\"newsList\":[{\"id\":\"800d249f-a7f7-4129-a8a6-14d0cf9667e5\",\"title\":\"foo-title\",\"imageUrl\":\"foo-image-url\",\"channel\":\"foo-channel\",\"url\":\"foo-url\",\"publishedAt\":\"2022-10-02T01:01:01.000000001-03:00\"}],\"offset\":0,\"limit\":25,\"pages\":1,\"total\":1}", writer.Body.String())
+	assert.Equal(t, "{\"newsList\":[{\"id\":\"800d249f-a7f7-4129-a8a6-14d0cf9667e5\",\"title\":\"foo-title\",\"imageUrl\":\"foo-image-url\",\"channel\":\"foo-channel\",\"url\":\"foo-url\",\"publishedAt\":\"2022-10-02T01:01:01.000000001-03:00\"}],\"offset\":0,\"limit\":20,\"pages\":1,\"total\":1}", writer.Body.String())
 }
 
 func Test_newsController_Read(t *testing.T) {
